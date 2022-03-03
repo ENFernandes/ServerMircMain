@@ -19,29 +19,17 @@ public class ClientHandler implements Runnable {
         this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         this.name = in.readLine();
         clientHandlerList.add(this);
-        msgClient("Server:" + name + "esta ai!");
     }
-    public void msgClient(String msgToSee) {
-        for (ClientHandler c : clientHandlerList) {
-            try {
-                if (!c.name.equals(name)) {
-                    c.out.write(msgToSee);
-                    c.out.newLine();
-                    c.out.flush();
-                }
-            } catch (IOException e) {
-                close();
-            }
-        }
-    }
+
     @Override
     public void run() {
         String msg;
-        while (true) {
+        while (clientSocket.isConnected()) {
             try {
                 msg = in.readLine();
-                msgClient(msg);
+                System.out.println(msg);
             } catch (IOException e) {
+                removeClient();
                 close();
                 break;
             }
